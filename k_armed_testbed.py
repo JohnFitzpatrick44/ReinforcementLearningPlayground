@@ -24,6 +24,3 @@ class k_armed_testbed():
 
     def is_optimal_action(self, action):
         return numpy.argmax(self.action_values) == action
-
-    def __str__(self):
-        return "\t".join(["Action %d: %.2f" % (action, self.action_values[action]) for action in range(self.k)])
