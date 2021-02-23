@@ -49,3 +49,35 @@ class weighted_estimator(sample_average_estimator):
         qn = self.action_value_estimates[action]
         self.action_value_estimates[action] = qn + self.alpha * (reward - qn)
 
+
+class ucb_estimator(weighted_estimator):
+    def __init__(self, action_value_initial_estimates, epsilon = 0, alpha = 0.5, c = 2):
+        super(ucb_estimator, self).__init__(action_value_initial_estimates, epsilon, alpha)
+        self.c = c
+        self.t = 0
+
+    def select_action(self):
+        self.t += 1
+        if np.random.rand() >= self.epsilon:
+            return self.select_greedy_action()
+
+        return self.select_ucb_action()
+
+    def get_action_potential(self, action):
+        qt = self.action_value_estimates[action]
+        ln_t = numpy.log(self.t)
+        nt = self.action_selection_count[action]
+
+        return q_t + self.c * numpy.sqrt(ln_t / nt)
+
+    def select_ucb_action(self):
+        actions_never_selected = [action for action in range(self.k) if self.action_selection_count[action] == 0]
+        if len(actions_never_selected) > 0:
+            selected_action = np.random.choice(actions_never_selected)
+            self.action_selection_count[selected_action] += 1
+            return selected_action
+
+        action_potential = [self.calculate_action_potential(action) for action in range(self.k)]
+        action_potential[self.select_greedy_action()] = -1
+
+        return numpy.argmax(action_potential)
