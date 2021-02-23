@@ -81,3 +81,31 @@ class ucb_estimator(weighted_estimator):
         action_potential[self.select_greedy_action()] = -1
 
         return numpy.argmax(action_potential)
+
+
+class gradient_bandit(estimator):
+    def __init__(self, action_value_initial_estimates, alpha):
+        super(self).__init__(action_value_initial_estimates)
+        self.average_reward = 0
+        self.numerical_preference = numpy.full(self.k, fill_value = 0.0)
+        self.alpha = alpha
+
+    def get_action_probabilities(self):
+        exp_ht = numpy.exp(self.numerical_preference)
+        return exp_ht / numpy.sum(exp_ht)
+
+    def select_action(self):
+        return numpy.random.choice(a = self.k, p = self.get_action_probabilities())
+
+    def update_average_reward(self, reward):
+        self.average_reward += self.alpha * (reward - self.average_reward)
+
+    def update_estimates(self, action, reward):
+        self.update_average_reward(reward)
+
+        p = self.get_action_probabilities()
+
+        h_next = self.numerical_preference - self.alpha * (reward - self.average_reward) * p
+        h_next[action] = self.numerical_preference[action] + self.alpha * (reward - self.average_reward) * (1 - p[action])
+
+        self.numerical_preference = h_next
