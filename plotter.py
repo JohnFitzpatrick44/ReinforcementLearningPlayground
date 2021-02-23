@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plot
 import numpy
 
-class plotter():
+class Plotter():
     def make_average_run_reward_plot(run_names, rewards):
-        for i, plot_names in enumerate(plot_names):
+        for i, plot_names in enumerate(run_names):
             average_run_rewards = numpy.average(rewards[i], axis = 0)
             plot.plot(average_run_rewards, label = plot_names)
 

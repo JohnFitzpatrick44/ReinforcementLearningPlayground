@@ -1,7 +1,7 @@
 import numpy
 
 
-class estimator():
+class Estimator(object):
     def __init__(self, action_value_initial_estimates):
         self.action_value_estimates = action_value_initial_estimates
         self.k = len(action_value_initial_estimates)
@@ -17,16 +17,16 @@ class estimator():
         return numpy.argmax(self.action_value_estimates)
 
     def select_exploration_action(self):
-        return np.random.choice(self.k)
+        return numpy.random.choice(self.k)
 
 
-class sample_average_estimator(estimator):
+class SampleAverageEstimator(Estimator):
     def __init__(self, action_value_initial_estimates, epsilon = 0):
-        super(self).__init__(action_value_initial_estimates)
+        super(SampleAverageEstimator, self).__init__(action_value_initial_estimates)
         self.epsilon = epsilon
 
     def select_action(self):
-        if np.random.rand() >= self.epsilon:
+        if numpy.random.rand() >= self.epsilon:
             return self.select_greedy_action()
 
         return self.select_exploration_action()
@@ -40,9 +40,9 @@ class sample_average_estimator(estimator):
         self.action_value_estimates[action] = qn + (1.0 / n) * (reward - qn)
 
 
-class weighted_estimator(sample_average_estimator):
+class WeightedEstimator(SampleAverageEstimator):
     def __init__(self, action_value_initial_estimates, epsilon = 0, alpha = 0.5):
-        super(weighted_estimator, self).__init__(action_value_initial_estimates, epsilon)
+        super(WeightedEstimator, self).__init__(action_value_initial_estimates, epsilon)
         self.alpha = alpha
 
     def update_estimates(self, action, reward):
@@ -50,15 +50,15 @@ class weighted_estimator(sample_average_estimator):
         self.action_value_estimates[action] = qn + self.alpha * (reward - qn)
 
 
-class ucb_estimator(weighted_estimator):
+class UCBEstimator(WeightedEstimator):
     def __init__(self, action_value_initial_estimates, epsilon = 0, alpha = 0.5, c = 2):
-        super(ucb_estimator, self).__init__(action_value_initial_estimates, epsilon, alpha)
+        super(UCBEstimator, self).__init__(action_value_initial_estimates, epsilon, alpha)
         self.c = c
         self.t = 0
 
     def select_action(self):
         self.t += 1
-        if np.random.rand() >= self.epsilon:
+        if numpy.random.rand() >= self.epsilon:
             return self.select_greedy_action()
 
         return self.select_ucb_action()
@@ -73,7 +73,7 @@ class ucb_estimator(weighted_estimator):
     def select_ucb_action(self):
         actions_never_selected = [action for action in range(self.k) if self.action_selection_count[action] == 0]
         if len(actions_never_selected) > 0:
-            selected_action = np.random.choice(actions_never_selected)
+            selected_action = numpy.random.choice(actions_never_selected)
             self.action_selection_count[selected_action] += 1
             return selected_action
 
@@ -83,7 +83,7 @@ class ucb_estimator(weighted_estimator):
         return numpy.argmax(action_potential)
 
 
-class gradient_bandit(estimator):
+class GradientEstimator(Estimator):
     def __init__(self, action_value_initial_estimates, alpha):
         super(self).__init__(action_value_initial_estimates)
         self.average_reward = 0
