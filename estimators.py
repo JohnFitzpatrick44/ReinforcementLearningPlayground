@@ -21,7 +21,7 @@ class estimator():
 
 
 class sample_average_estimator(estimator):
-    def __init__(self, action_value_initial_estimates, epsilon):
+    def __init__(self, action_value_initial_estimates, epsilon = 0):
         super(self).__init__(action_value_initial_estimates)
         self.epsilon = epsilon
 
@@ -38,4 +38,14 @@ class sample_average_estimator(estimator):
         n = self.action_selection_count[action]
 
         self.action_value_estimates[action] = qn + (1.0 / n) * (reward - qn)
-        
+
+
+class weighted_estimator(sample_average_estimator):
+    def __init__(self, action_value_initial_estimates, epsilon = 0, alpha = 0.5):
+        super(weighted_estimator, self).__init__(action_value_initial_estimates, epsilon)
+        self.alpha = alpha
+
+    def update_estimates(self, action, reward):
+        qn = self.action_value_estimates[action]
+        self.action_value_estimates[action] = qn + self.alpha * (reward - qn)
+
