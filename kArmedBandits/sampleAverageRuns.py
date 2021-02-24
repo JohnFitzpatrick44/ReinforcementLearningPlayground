@@ -9,7 +9,7 @@ STEPS = 1000
 RUNS = 2000
 INITIAL_ACTION_VALUE_ESTIMATE = 0.0
 REWARD_VARIANCE = 1.0
-STATIONARY = True
+STATIONARY = False
 
 rewards = numpy.full((3, RUNS, STEPS), fill_value = 0.0)
 optimal_selections = numpy.full((3, RUNS, STEPS), fill_value = 0.0)

@@ -1,6 +1,6 @@
 import numpy
 from tqdm import tqdm
-from estimators import SampleAverageEstimator, WeightedEstimator
+from estimators import UCBEstimator
 from k_armed_testbed import KArmedTestbed
 from plotter import Plotter
 
@@ -20,10 +20,10 @@ for run in tqdm(range(RUNS)):
 
     action_value_estimates = numpy.full(K, fill_value = INITIAL_ACTION_VALUE_ESTIMATE)
 
-    estimator1 = WeightedEstimator(action_value_estimates.copy(), epsilon = 0.0, alpha = 0.1)
-    estimator2 = WeightedEstimator(action_value_estimates.copy(), epsilon = 0.0, alpha = 0.5)
-    estimator3 = WeightedEstimator(action_value_estimates.copy(), epsilon = 0.1, alpha = 0.1)
-    estimator4 = WeightedEstimator(action_value_estimates.copy(), epsilon = 0.1, alpha = 0.5)
+    estimator1 = UCBEstimator(action_value_estimates.copy(), epsilon = 0.1, alpha = 0.1, c = 1.5)
+    estimator2 = UCBEstimator(action_value_estimates.copy(), epsilon = 0.1, alpha = 0.1, c = 1.5)
+    estimator3 = UCBEstimator(action_value_estimates.copy(), epsilon = 0.1, alpha = 0.5, c = 2.5)
+    estimator4 = UCBEstimator(action_value_estimates.copy(), epsilon = 0.1, alpha = 0.5, c = 2.5)
 
     estimators = [estimator1, estimator2, estimator3, estimator4]
 
@@ -39,5 +39,5 @@ for run in tqdm(range(RUNS)):
 
         testbed.update_action_values()
 
-Plotter.make_average_run_reward_plot(["Ɛ=0, α=0.1", "Ɛ=0, α=0.5", "Ɛ=0.1, α=0.1", "Ɛ=0.1, α=0.5"], numpy.array(rewards))
-Plotter.make_optimal_selection_plot(["Ɛ=0, α=0.1", "Ɛ=0, α=0.5", "Ɛ=0.1, α=0.1", "Ɛ=0.1, α=0.5"], numpy.array(optimal_selections))
+Plotter.make_average_run_reward_plot(["Ɛ=0.1, α=0.1, c=1.5", "Ɛ=0.1, α=0.1, c=1.5", "Ɛ=0.1, α=0.5, c=2.5", "Ɛ=0.1, α=0.5, c=2.5"], numpy.array(rewards))
+Plotter.make_optimal_selection_plot(["Ɛ=0.1, α=0.1, c=1.5", "Ɛ=0.1, α=0.1, c=1.5", "Ɛ=0.1, α=0.5, c=2.5", "Ɛ=0.1, α=0.5, c=2.5"], numpy.array(optimal_selections))
