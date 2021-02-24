@@ -5,10 +5,10 @@ from k_armed_testbed import KArmedTestbed
 from plotter import Plotter
 
 K = 10
-STEPS = 10000
+STEPS = 1000
 RUNS = 2000
 INITIAL_ACTION_VALUE_ESTIMATE = 0.0
-REWARD_VARIANCE = 10.0
+REWARD_VARIANCE = 1.0
 STATIONARY = True
 
 rewards = numpy.full((3, RUNS, STEPS), fill_value = 0.0)
